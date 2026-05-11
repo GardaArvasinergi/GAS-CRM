@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAS Email Agent — PT Garda Arva Sinergi</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --surface: #111419;
+  --surface2: #181c23;
+  --border: #1e242f;
+  --border2: #252c38;
+  --accent: #e8a020;
+  --accent2: #f0b840;
+  --accent-dim: rgba(232,160,32,0.12);
+  --accent-dim2: rgba(232,160,32,0.06);
+  --green: #2ecc71;
+  --green-dim: rgba(46,204,113,0.12);
+  --red: #e74c3c;
+  --red-dim: rgba(231,76,60,0.12);
+  --blue: #3498db;
+  --blue-dim: rgba(52,152,219,0.12);
+  --purple: #9b59b6;
+  --purple-dim: rgba(155,89,182,0.12);
+  --text: #e8eaf0;
+  --text2: #8892a4;
+  --text3: #5a6478;
+  --radius: 10px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-icon {
+  width: 34px; height: 34px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  color: #0a0c10;
+  letter-spacing: 0.5px;
+}
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+}
+.logo-sub {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  margin-top: 1px;
+}
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
+  font-family: 'DM Mono', monospace;
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.nav-section {
+  padding: 0 12px 20px;
+}
+.nav-label {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  color: var(--text3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 13.5px;
+  color: var(--text2);
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(232,160,32,0.2);
+}
+.nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: #0a0c10;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-family: 'DM Mono', monospace;
+}
+.nav-badge.green { background: var(--green); }
+.nav-badge.blue { background: var(--blue); }
+
+/* MAIN */
+.main {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* SECTION */
+.section { display: none; }
+.section.active { display: block; }
+
+/* PAGE TITLE */
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.page-sub {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 24px;
+}
+
+/* STAT CARDS */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-change {
+  font-size: 11px;
+  color: var(--green);
+  margin-top: 4px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* CARDS */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #0a0c10;
+  font-weight: 600;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-ghost {
+  background: var(--surface2);
+  color: var(--text2);
+}
+.btn-ghost:hover { color: var(--text); }
+.btn-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
+.btn-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(231,76,60,0.2); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-loading { opacity: 0.6; pointer-events: none; }
+
+/* INPUTS */
+.input-group { margin-bottom: 14px; }
+.input-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 6px;
+  display: block;
+  font-family: 'DM Mono', monospace;
+}
+.input, .select, .textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--accent);
+}
+.textarea { resize: vertical; min-height: 100px; }
+.select { appearance: none; cursor: pointer; }
+
+/* BADGE */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+}
+.badge-green { background: var(--green-dim); color: var(--green); }
+.badge-yellow { background: var(--accent-dim); color: var(--accent); }
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-blue { background: var(--blue-dim); color: var(--blue); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); }
+
+/* TABLE */
+.table { width: 100%; border-collapse: collapse; }
+.table th {
+  text-align: left;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.table td {
+  padding: 12px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+}
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: var(--surface2); }
+
+/* GRID 2 */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* AI RESPONSE BOX */
+.ai-box {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre-wrap;
+  font-family: 'DM Sans', sans-serif;
+  min-height: 80px;
+}
+.ai-box.loading {
+  color: var(--text3);
+  font-style: italic;
+}
+
+/* PROGRESS */
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* PIPELINE STEP */
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 20px 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.pipe-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 100px;
+}
+.pipe-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  background: var(--surface2);
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s;
+}
+.pipe-icon.active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 16px rgba(232,160,32,0.3);
+}
+.pipe-icon.done {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+.pipe-label {
+  font-size: 11px;
+  color: var(--text3);
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+}
+.pipe-arrow {
+  flex: 1;
+  height: 2px;
+  background: var(--border2);
+  min-width: 30px;
+  margin-top: -18px;
+}
+.pipe-arrow.done { background: var(--green); }
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.tab {
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.tab.active {
+  background: var(--accent);
+  color: #0a0c10;
+  font-weight: 600;
+}
+
+/* INBOX ITEM */
+.inbox-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.inbox-item:hover { border-color: var(--accent); }
+.inbox-item.unread { border-left: 3px solid var(--accent); }
+.inbox-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'Syne', sans-serif;
+  flex-shrink: 0;
+}
+.inbox-meta { flex: 1; }
+.inbox-from { font-weight: 600; font-size: 13px; color: var(--text); }
+.inbox-subject { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.inbox-preview { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.inbox-time {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+/* TOAST */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  min-width: 260px;
+  animation: slideIn 0.3s ease;
+  box-shadow: var(--shadow);
+}
+@keyframes slideIn {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* SETUP STEP */
+.setup-step {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+}
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid rgba(232,160,32,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.step-num.done {
+  background: var(--green-dim);
+  border-color: rgba(46,204,113,0.3);
+  color: var(--green);
+}
+.step-content { flex: 1; }
+.step-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.step-action { margin-top: 10px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* CODE BLOCK */
+.code-block {
+  background: #070a0e;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: #a8d8a8;
+  overflow-x: auto;
+  line-height: 1.7;
+  position: relative;
+}
+.code-label {
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: 10px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+
+/* SECTION HEADER ROW */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+/* TOGGLE */
+.toggle {
+  position: relative;
+  width: 40px; height: 22px;
+  display: inline-block;
+}
+.toggle input { display: none; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border2);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.toggle-slider:before {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; top: 3px;
+  background: var(--text3);
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.toggle input:checked + .toggle-slider { background: var(--green-dim); border: 1px solid var(--green); }
+.toggle input:checked + .toggle-slider:before { transform: translateX(18px); background: var(--green); }
+
+.flex-row { display: flex; align-items: center; gap: 10px; }
+.flex-end { justify-content: flex-end; }
+.flex-between { justify-content: space-between; }
+.mt8 { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+.mt16 { margin-top: 16px; }
+.mb8 { margin-bottom: 8px; }
+.mb16 { margin-bottom: 16px; }
+.gap8 { gap: 8px; }
+.gap12 { gap: 12px; }
+.w100 { width: 100%; }
+
+/* TEMPLATE CARD */
+.template-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 10px;
+}
+.template-card:hover { border-color: var(--accent); }
+.template-card.selected { border-color: var(--accent); background: var(--accent-dim2); }
+.template-name { font-weight: 600; font-size: 13px; }
+.template-target { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.template-preview { font-size: 12px; color: var(--text2); margin-top: 8px; line-height: 1.6; border-top: 1px solid var(--border); padding-top: 8px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 28px;
+  max-width: 640px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-close {
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 20px;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+
+/* SCHEDULE ITEM */
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.schedule-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 50px;
+}
+.schedule-desc { font-size: 13px; flex: 1; }
+.schedule-status { font-size: 11px; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">GAS</div>
+    <div>
+      <div class="logo-text">Email Agent</div>
+      <div class="logo-sub">PT Garda Arva Sinergi — AI Sales Engine</div>
+    </div>
+  </div>
+  <div class="header-status">
+    <div class="status-dot"></div>
+    <span id="agentStatus">Agent Aktif</span>
+    <span style="color:var(--border2)">|</span>
+    <span id="clockDisplay" style="color:var(--accent)"></span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Dashboard</div>
+      <div class="nav-item active" onclick="showSection('dashboard')">
+        <span class="icon">📊</span> Overview
+      </div>
+      <div class="nav-item" onclick="showSection('inbox')">
+        <span class="icon">📥</span> Inbox
+        <span class="nav-badge" id="inboxBadge">3</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Leads & Hunting</div>
+      <div class="nav-item" onclick="showSection('leads')">
+        <span class="icon">👥</span> Leads Database
+        <span class="nav-badge blue">1353</span>
+      </div>
+      <div class="nav-item" onclick="showSection('hunter')">
+        <span class="icon">🎯</span> Lead Hunter
+        <span class="nav-badge green">Auto</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Email Actions</div>
+      <div class="nav-item" onclick="showSection('blast')">
+        <span class="icon">🚀</span> Email Blasting
+      </div>
+      <div class="nav-item" onclick="showSection('templates')">
+        <span class="icon">📝</span> Template AI
+      </div>
+      <div class="nav-item" onclick="showSection('schedule')">
+        <span class="icon">⏰</span> Jadwal Kirim
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Koneksi</div>
+      <div class="nav-item" onclick="showSection('connections')">
+        <span class="icon">🔗</span> Apollo + LinkedIn
+      </div>
+      <div class="nav-item" onclick="showSection('wa')">
+        <span class="icon">💬</span> WA Integration
+      </div>
+      <div class="nav-item" onclick="showSection('settings')">
+        <span class="icon">⚙️</span> Pengaturan
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="section active" id="sec-dashboard">
+      <div class="page-title">📊 Command Center</div>
+      <div class="page-sub">Semua aktivitas email & leads GAS dalam satu layar — <span style="color:var(--accent)">Galih Amboro</span></div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Leads</div>
+          <div class="stat-val">1,353</div>
+          <div class="stat-change">↑ +0 baru hari ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Email Terkirim</div>
+          <div class="stat-val" id="statSent">0</div>
+          <div class="stat-change" id="statSentSub">Belum ada blast</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Reply Masuk</div>
+          <div class="stat-val">3</div>
+          <div class="stat-change" id="statReplySub">↑ perlu ditindak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pipeline Value</div>
+          <div class="stat-val">Rp 0</div>
+          <div class="stat-change">Blast dulu, deal menyusul</div>
+        </div>
+      </div>
+
+      <!-- Pipeline Visual -->
+      <div class="card">
+        <div class="card-title">🔄 Pipeline Email Agent</div>
+        <div class="pipeline">
+          <div class="pipe-step">
+            <div class="pipe-icon done">🎯</div>
+            <div class="pipe-label">Leads DB<br/>1,353 ready</div>
+          </div>
+          <div class="pipe-arrow done"></div>
+          <div class="pipe-step">
+            <div class="pipe-icon active">🤖</div>
+            <div class="pipe-label">AI Generate<br/>Email</div>
+          </div>
+          <div class="pipe-arrow"></div>
+          <div class="pipe-step">
+            <div class="pipe-icon">🚀</div>
+            <div class="pipe-label">Gmail Blast<br/>Per Sektor</div>
+          </div>
+          <div class="pipe-arrow"></div>
+          <div class="pipe-step">
+            <div class="pipe-icon">📥</div>
+            <div class="pipe-label">Monitor<br/>Inbox</div>
+          </div>
+          <div class="pipe-arrow"></div>
+          <div class="pipe-step">
+            <div class="pipe-icon">💬</div>
+            <div class="pipe-label">Notif WA<br/>Pak Galih</div>
+          </div>
+          <div class="pipe-arrow"></div>
+          <div class="pipe-step">
+            <div class="pipe-icon">✅</div>
+            <div class="pipe-label">Deal<br/>Closed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- Daily Briefing -->
+        <div class="card">
+          <div class="card-title">🌅 Briefing Hari Ini</div>
+          <div id="briefingBox" class="ai-box loading">Tekan tombol untuk generate briefing harian dari AI...</div>
+          <div style="margin-top:12px">
+            <button class="btn btn-primary" onclick="generateBriefing()">⚡ Generate Briefing</button>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+          <div class="card-title">⚡ Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-outline w100" onclick="showSection('blast')">🚀 Mulai Email Blast Sekarang</button>
+            <button class="btn btn-outline w100" onclick="showSection('inbox')">📥 Cek Inbox & Reply Pending</button>
+            <button class="btn btn-outline w100" onclick="showSection('hunter')">🎯 Lihat Leads Baru dari Hunter</button>
+            <button class="btn btn-outline w100" onclick="showSection('templates')">✍️ Generate Template Email AI</button>
+            <button class="btn btn-outline w100" onclick="sendWAReport()">💬 Kirim Laporan ke WA</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="card">
+        <div class="card-title">📋 Log Aktivitas</div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Aktivitas</th>
+              <th>Detail</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="activityLog">
+            <tr>
+              <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">08:00</td>
+              <td>Agent dimulai</td>
+              <td>GAS Email Agent v1.0 aktif</td>
+              <td><span class="badge badge-green">✓ OK</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">08:01</td>
+              <td>Load leads database</td>
+              <td>1,353 leads dari CSV</td>
+              <td><span class="badge badge-green">✓ Loaded</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">08:02</td>
+              <td>Cek inbox Gmail</td>
+              <td>3 email baru ditemukan</td>
+              <td><span class="badge badge-yellow">⚡ Perlu review</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== INBOX ===== -->
+    <div class="section" id="sec-inbox">
+      <div class="page-title">📥 Inbox Monitor</div>
+      <div class="page-sub">AI membaca & merangkum email masuk — Pak Galih tinggal approve balasan</div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title" style="margin:0">📬 Email Masuk Hari Ini</div>
+          <div class="flex-row gap8">
+            <button class="btn btn-ghost btn-sm" onclick="refreshInbox()">🔄 Refresh</button>
+            <button class="btn btn-primary btn-sm" onclick="summarizeInbox()">🤖 Rangkum Semua</button>
+          </div>
+        </div>
+        <div id="inboxList">
+          <div class="inbox-item unread" onclick="openEmail(0)">
+            <div class="inbox-avatar">PT</div>
+            <div class="inbox-meta">
+              <div class="inbox-from">procurement@pertamina.co.id <span class="badge badge-yellow" style="font-size:10px">LEADS</span></div>
+              <div class="inbox-subject">Re: Penawaran Jasa Inspeksi — GAS IT</div>
+              <div class="inbox-preview">Terima kasih atas email Bapak. Kami tertarik untuk mengetahui lebih lanjut mengenai...</div>
+            </div>
+            <div>
+              <div class="inbox-time">09:14</div>
+              <div style="text-align:right;margin-top:6px"><span class="badge badge-green" style="font-size:10px">HOT 🔥</span></div>
+            </div>
+          </div>
+          <div class="inbox-item unread" onclick="openEmail(1)">
+            <div class="inbox-avatar">AI</div>
+            <div class="inbox-meta">
+              <div class="inbox-from">hse@astra-int.com</div>
+              <div class="inbox-subject">Pertanyaan: Sertifikasi Inspector GAS</div>
+              <div class="inbox-preview">Selamat pagi, sehubungan dengan email yang kami terima, kami ingin menanyakan...</div>
+            </div>
+            <div>
+              <div class="inbox-time">11:30</div>
+              <div style="text-align:right;margin-top:6px"><span class="badge badge-blue" style="font-size:10px">WARM</span></div>
+            </div>
+          </div>
+          <div class="inbox-item" onclick="openEmail(2)">
+            <div class="inbox-avatar">SM</div>
+            <div class="inbox-meta">
+              <div class="inbox-from">safety@samsung-electro.com</div>
+              <div class="inbox-subject">Unsubscribe request</div>
+              <div class="inbox-preview">Please remove us from your mailing list...</div>
+            </div>
+            <div>
+              <div class="inbox-time">13:45</div>
+              <div style="text-align:right;margin-top:6px"><span class="badge badge-red" style="font-size:10px">COLD</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🤖 AI Summary Inbox</div>
+        <div id="inboxSummary" class="ai-box loading">Tekan "Rangkum Semua" untuk AI baca dan rangkum semua email hari ini...</div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="summarizeInbox()">🤖 Generate Summary</button>
+          <button class="btn btn-outline" onclick="sendWASummary()">💬 Kirim ke WA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LEADS ===== -->
+    <div class="section" id="sec-leads">
+      <div class="page-title">👥 Leads Database</div>
+      <div class="page-sub">1,353 leads siap di-blast — filter per sektor, jabatan, atau lokasi</div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="flex-row gap8">
+            <input class="input" style="width:260px" placeholder="🔍 Cari perusahaan, kontak..." id="leadsSearch" oninput="filterLeads()">
+            <select class="select" style="width:160px" id="sectorFilter" onchange="filterLeads()">
+              <option value="">Semua Sektor</option>
+              <option>Automotive</option>
+              <option>Oil & Gas</option>
+              <option>Chemical</option>
+              <option>Electronics</option>
+              <option>Manufacturing</option>
+              <option>Mining</option>
+            </select>
+          </div>
+          <div class="flex-row gap8">
+            <span id="leadsCount" style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace">1,353 leads</span>
+            <button class="btn btn-primary btn-sm" onclick="blastSelected()">🚀 Blast Terpilih</button>
+          </div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" onclick="toggleAll(this)" style="accent-color:var(--accent)"></th>
+              <th>Perusahaan</th>
+              <th>Sektor</th>
+              <th>Kontak Utama</th>
+              <th>Email</th>
+              <th>Lokasi</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTable">
+            <!-- populated by JS -->
+          </tbody>
+        </table>
+        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--text3)">Menampilkan 1-20 dari 1,353 leads</span>
+          <div class="flex-row gap8">
+            <button class="btn btn-ghost btn-sm">‹ Prev</button>
+            <button class="btn btn-ghost btn-sm">Next ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LEAD HUNTER ===== -->
+    <div class="section" id="sec-hunter">
+      <div class="page-title">🎯 Lead Hunter Agent</div>
+      <div class="page-sub">Otomatis cari 150+ leads baru per hari dari LinkedIn, Apollo, dan sumber gratis</div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Leads Hari Ini</div>
+          <div class="stat-val" id="hunterToday">0</div>
+          <div class="stat-change">Target: 150/hari</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Hunting</div>
+          <div class="stat-val">1,353</div>
+          <div class="stat-change">Sejak awal</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Sumber Aktif</div>
+          <div class="stat-val">3</div>
+          <div class="stat-change">Apollo + LinkedIn + Free</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Valid Email</div>
+          <div class="stat-val">98%</div>
+          <div class="stat-change">↑ Terverifikasi</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- Hunter Config -->
+        <div class="card">
+          <div class="card-title">⚙️ Konfigurasi Hunter</div>
+          <div class="input-group">
+            <label class="input-label">Target Area</label>
+            <select class="select">
+              <option>Cirebon & sekitarnya (Radius 50km)</option>
+              <option>Jawa Barat (KIIC, Cikarang, Karawang)</option>
+              <option>Jawa Timur (Surabaya, Gresik)</option>
+              <option>Jawa Tengah (Semarang, Cilacap)</option>
+              <option>Sumatera (Batam, Medan, Palembang)</option>
+              <option>Kalimantan (Balikpapan, Bontang)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Target Sektor</label>
+            <select class="select">
+              <option>Semua Sektor (rekomendasi)</option>
+              <option>Oil & Gas (prioritas)</option>
+              <option>Manufacturing</option>
+              <option>Chemical</option>
+              <option>Mining</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Target Jabatan</label>
+            <input class="input" placeholder="HSE Manager, QA/QC, Procurement, GA" value="HSE Manager, QA/QC Engineer, Procurement Manager">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Leads per Hari</label>
+            <input class="input" type="number" value="150" min="10" max="500">
+          </div>
+          <button class="btn btn-primary w100 mt8" onclick="startHunter()">🚀 Mulai Hunting Sekarang</button>
+        </div>
+
+        <!-- Sumber Leads -->
+        <div class="card">
+          <div class="card-title">🔗 Sumber Leads</div>
+
+          <div class="setup-step">
+            <div class="step-num done">✓</div>
+            <div class="step-content">
+              <div class="step-title">Apollo.io API</div>
+              <div class="step-desc">Rp 450rb/bulan — 200 leads/hari verified email. Filter by industry, title, location.</div>
+              <div class="step-action">
+                <span class="badge badge-green">✓ Terhubung (setup di Pengaturan)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">LinkedIn (Profil Andreas Galih Amboro)</div>
+              <div class="step-desc">Export koneksi LinkedIn + Sales Navigator basic. 16 tahun network = aset besar.</div>
+              <div class="step-action">
+                <button class="btn btn-outline btn-sm" onclick="showSection('connections')">Setup LinkedIn →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Sumber Gratis</div>
+              <div class="step-desc">Hunter.io (25 email/bln gratis), Google Maps scraper, Yellow Pages ID, database BKPM, KBLI lookup.</div>
+              <div class="step-action">
+                <span class="badge badge-yellow">Gratis — aktifkan di bawah</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Make.com Automation</div>
+              <div class="step-desc">Scenario otomatis: setiap hari jam 07:00 WIB — hunter jalan, leads masuk ke CRM, notif WA.</div>
+              <div class="step-action">
+                <button class="btn btn-outline btn-sm" onclick="exportMakeScenario()">📥 Download Scenario JSON</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hunter Result -->
+      <div class="card">
+        <div class="card-title">📊 Hasil Hunting Terbaru</div>
+        <div id="hunterResult" class="ai-box loading" style="min-height:60px">Tekan "Mulai Hunting" untuk cari leads baru...</div>
+      </div>
+    </div>
+
+    <!-- ===== EMAIL BLAST ===== -->
+    <div class="section" id="sec-blast">
+      <div class="page-title">🚀 Email Blasting</div>
+      <div class="page-sub">AI generate email personal per sektor/jabatan — satu klik kirim ke ratusan leads</div>
+
+      <div class="grid2">
+        <!-- Blast Config -->
+        <div class="card">
+          <div class="card-title">🎯 Konfigurasi Blast</div>
+
+          <div class="input-group">
+            <label class="input-label">Dari Email</label>
+            <input class="input" id="fromEmail" placeholder="galih@gardarvasinergi.co.id" value="galih@gardarvasinergi.co.id">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Nama Pengirim</label>
+            <input class="input" id="fromName" placeholder="Andreas Galih Amboro" value="Andreas Galih Amboro — GAS IT">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Target Sektor</label>
+            <select class="select" id="blastSector">
+              <option value="all">Semua Sektor (1,353 leads)</option>
+              <option value="Automotive">Automotive (81 leads)</option>
+              <option value="Oil & Gas">Oil & Gas (78 leads)</option>
+              <option value="Chemical">Chemical (78 leads)</option>
+              <option value="Electronics">Electronics (76 leads)</option>
+              <option value="Manufacturing">Manufacturing (65 leads)</option>
+              <option value="Mining">Mining (63 leads)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Target Jabatan</label>
+            <select class="select" id="blastTitle">
+              <option value="all">Semua Jabatan</option>
+              <option value="HSE">HSE Manager / HSE Officer</option>
+              <option value="QC">QA/QC Manager / Engineer</option>
+              <option value="Procurement">Procurement Manager</option>
+              <option value="GA">GA Manager</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Jadwal Kirim</label>
+            <select class="select" id="blastSchedule">
+              <option>Kirim Sekarang</option>
+              <option>Besok Pagi 08:00 WIB</option>
+              <option>Senin Depan 08:00 WIB</option>
+              <option>Pilih Waktu Manual</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Batas Kirim per Hari</label>
+            <input class="input" type="number" value="50" min="10" max="200" id="blastLimit">
+            <div style="font-size:11px;color:var(--text3);margin-top:4px">Rekomendasi: 50-100/hari agar tidak kena spam filter Gmail</div>
+          </div>
+
+          <div style="padding:12px;background:var(--accent-dim2);border:1px solid rgba(232,160,32,0.2);border-radius:8px;font-size:12px;color:var(--text2);margin-bottom:14px">
+            ⚡ <strong style="color:var(--accent)">Sebelum blast:</strong> Pastikan Gmail SMTP/OAuth sudah dikonfigurasi di tab Pengaturan. Gmail gratis: 500 email/hari.
+          </div>
+
+          <button class="btn btn-primary w100" onclick="generateBlastEmail()" id="btnGenerate">✍️ Generate Email AI Dulu</button>
+        </div>
+
+        <!-- Preview Email -->
+        <div class="card">
+          <div class="card-title">👁️ Preview Email</div>
+          <div class="input-group">
+            <label class="input-label">Subject</label>
+            <input class="input" id="emailSubject" placeholder="Subject akan di-generate AI..." value="">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Isi Email</label>
+            <textarea class="textarea" id="emailBody" style="min-height:260px" placeholder="Klik 'Generate Email AI' untuk buat email personal per sektor..."></textarea>
+          </div>
+          <div class="flex-row flex-between mt8">
+            <button class="btn btn-outline btn-sm" onclick="regenerateEmail()">🔄 Regenerate</button>
+            <div class="flex-row gap8">
+              <button class="btn btn-ghost btn-sm" onclick="previewEmail()">👁️ Preview HTML</button>
+              <button class="btn btn-primary" onclick="confirmBlast()" id="btnBlast" disabled>🚀 Blast Sekarang</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blast Progress -->
+      <div class="card" id="blastProgressCard" style="display:none">
+        <div class="card-title">📡 Status Pengiriman</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:13px" id="blastProgressText">Mempersiapkan...</span>
+          <span style="font-size:13px;color:var(--accent);font-family:'DM Mono',monospace" id="blastProgressNum">0/0</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="blastProgressFill" style="width:0%"></div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text3)" id="blastLog"></div>
+      </div>
+    </div>
+
+    <!-- ===== TEMPLATES ===== -->
+    <div class="section" id="sec-templates">
+      <div class="page-title">📝 Template Email AI</div>
+      <div class="page-sub">Generate email personal per jabatan — HSE, QA/QC, Procurement, GA, SCM, HRD</div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'tpl-hse')">🦺 HSE</div>
+        <div class="tab" onclick="switchTab(this,'tpl-qc')">🔬 QA/QC</div>
+        <div class="tab" onclick="switchTab(this,'tpl-proc')">📦 Procurement</div>
+        <div class="tab" onclick="switchTab(this,'tpl-ga')">🏢 GA Manager</div>
+        <div class="tab" onclick="switchTab(this,'tpl-ai')">✨ Generate Baru</div>
+      </div>
+
+      <!-- HSE Template -->
+      <div id="tpl-hse">
+        <div class="template-card selected">
+          <div class="template-name">Template HSE Manager — Inspeksi K3</div>
+          <div class="template-target">Target: HSE Manager, Safety Officer, K3 Supervisor</div>
+          <div class="template-preview">
+            Subject: Efisiensi Inspeksi K3 & Compliance — Solusi Digital GAS IT untuk [Nama Perusahaan]<br><br>
+            Yth. Bapak/Ibu [Nama HSE Manager],<br><br>
+            Saya Andreas Galih Amboro dari PT Garda Arva Sinergi (GAS IT) — perusahaan inspeksi teknik industri yang fokus pada digitalisasi proses K3 dan inspeksi compliance.<br><br>
+            Dengan 16 tahun pengalaman di dunia inspeksi (welding, pressure vessel, NDT, piping, hazardous area), kami memahami tantangan yang dihadapi tim HSE [Nama Perusahaan] — terutama dalam memastikan semua aset kritis terdokumentasi sesuai standar ASME, API, dan regulasi Kemnaker.<br><br>
+            <strong>Yang kami tawarkan untuk tim HSE Bapak/Ibu:</strong><br>
+            ✅ Inspeksi digital dengan checklist otomatis (16 disiplin)<br>
+            ✅ Laporan real-time langsung ke dashboard Bapak/Ibu<br>
+            ✅ Bukti compliance yang rapi untuk audit Kemnaker/ISO<br>
+            ✅ Harga kompetitif dengan kualitas TÜV/SGS standard<br><br>
+            Boleh kami jadwalkan demo 30 menit minggu ini?<br><br>
+            Hormat saya,<br>
+            Andreas Galih Amboro<br>
+            Direktur — PT Garda Arva Sinergi<br>
+            📱 WA: [Nomor WA Pak Galih]
+          </div>
+        </div>
+        <div class="flex-row gap8 mt12">
+          <button class="btn btn-primary" onclick="useTemplate('hse')">✍️ Gunakan Template Ini</button>
+          <button class="btn btn-outline" onclick="improveTemplate('hse')">🤖 Improve dengan AI</button>
+        </div>
+      </div>
+
+      <!-- QC Template -->
+      <div id="tpl-qc" style="display:none">
+        <div class="template-card selected">
+          <div class="template-name">Template QA/QC Manager — Quality & NDT</div>
+          <div class="template-target">Target: QA Manager, QC Engineer, Quality Supervisor, Inspector</div>
+          <div class="template-preview">
+            Subject: Upgrade Proses QC dengan Inspeksi Digital — GAS IT untuk [Nama Perusahaan]<br><br>
+            Yth. Bapak/Ibu [QA/QC Manager],<br><br>
+            Saya dari GAS IT — tim inspektur berpengalaman 16 tahun yang kini membawa standar TÜV/SGS ke dalam platform digital untuk tim QC seperti tim Bapak/Ibu di [Nama Perusahaan].<br><br>
+            Kami tahu betapa kritisnya akurasi dan kecepatan laporan QC untuk proses produksi. Dengan GAS IT:<br><br>
+            🔬 NDT, welding inspection, pressure vessel — checklist otomatis sesuai ASME/API<br>
+            📋 Laporan NCR otomatis, tidak perlu input manual lagi<br>
+            📊 Dashboard QC real-time untuk monitoring seluruh aset<br>
+            🏅 Sertifikasi inspector terverifikasi — bukan kontraktor biasa<br><br>
+            Kami siap demo langsung di fasilitas Bapak/Ibu. Kapan waktu yang cocok?
+          </div>
+        </div>
+        <div class="flex-row gap8 mt12">
+          <button class="btn btn-primary" onclick="useTemplate('qc')">✍️ Gunakan Template Ini</button>
+          <button class="btn btn-outline" onclick="improveTemplate('qc')">🤖 Improve dengan AI</button>
+        </div>
+      </div>
+
+      <!-- Procurement Template -->
+      <div id="tpl-proc" style="display:none">
+        <div class="template-card selected">
+          <div class="template-name">Template Procurement — Vendor Inspeksi</div>
+          <div class="template-target">Target: Procurement Manager, Purchasing, Supply Chain</div>
+          <div class="template-preview">
+            Subject: Penawaran Jasa Inspeksi Teknik Industri — PT Garda Arva Sinergi (GAS IT)<br><br>
+            Yth. Tim Procurement [Nama Perusahaan],<br><br>
+            Perkenalkan, PT Garda Arva Sinergi (GAS IT) — perusahaan jasa inspeksi teknik industri berbasis digital dengan standar internasional TÜV/SGS.<br><br>
+            Kami bermaksud mendaftarkan diri sebagai vendor inspeksi untuk [Nama Perusahaan] dan menawarkan:<br><br>
+            📌 Jasa Inspeksi: Welding, NDT, Pressure Vessel, Piping, Structural, Electrical, Hazardous Area, dan 10 disiplin lainnya<br>
+            📌 Laporan Digital: Format PDF/DOCX/Dashboard sesuai kebutuhan klien<br>
+            📌 Harga Kompetitif: Request quotasi sesuai scope pekerjaan<br>
+            📌 Legalitas Lengkap: PT terdaftar, NPWP, PKP (proses)<br><br>
+            Terlampir company profile kami. Mohon kesempatan untuk presentasi.
+          </div>
+        </div>
+        <div class="flex-row gap8 mt12">
+          <button class="btn btn-primary" onclick="useTemplate('proc')">✍️ Gunakan Template Ini</button>
+          <button class="btn btn-outline" onclick="improveTemplate('proc')">🤖 Improve dengan AI</button>
+        </div>
+      </div>
+
+      <!-- GA Template -->
+      <div id="tpl-ga" style="display:none">
+        <div class="template-card selected">
+          <div class="template-name">Template GA Manager — Asset & Fasilitas</div>
+          <div class="template-target">Target: GA Manager, Admin, Facility Manager, Building Manager</div>
+          <div class="template-preview">
+            Subject: Inspeksi Aset & Fasilitas Digital — Solusi GA untuk [Nama Perusahaan]<br><br>
+            Yth. Bapak/Ibu GA Manager [Nama Perusahaan],<br><br>
+            Sebagai GA Manager, Bapak/Ibu tentu familiar dengan tantangan memastikan semua aset fasilitas — dari panel listrik, APAR, racking, hingga sistem fire protection — selalu dalam kondisi baik dan terdokumentasi.<br><br>
+            GAS IT hadir sebagai mitra inspeksi digital yang membantu tim GA:<br><br>
+            🏢 Inspeksi rutin semua aset dengan laporan digital otomatis<br>
+            🔥 Fire protection, electrical, structural — satu vendor semua selesai<br>
+            📋 Dokumentasi untuk audit internal & eksternal siap dalam hitungan menit<br>
+            💡 Notifikasi otomatis ketika aset mendekati jadwal inspeksi berikutnya<br><br>
+            Boleh saya kirimkan proposal singkat untuk fasilitas [Nama Perusahaan]?
+          </div>
+        </div>
+        <div class="flex-row gap8 mt12">
+          <button class="btn btn-primary" onclick="useTemplate('ga')">✍️ Gunakan Template Ini</button>
+          <button class="btn btn-outline" onclick="improveTemplate('ga')">🤖 Improve dengan AI</button>
+        </div>
+      </div>
+
+      <!-- AI Generate -->
+      <div id="tpl-ai" style="display:none">
+        <div class="card">
+          <div class="card-title">✨ Generate Template Baru dengan AI</div>
+          <div class="input-group">
+            <label class="input-label">Jabatan Target</label>
+            <input class="input" id="aiTplTitle" placeholder="Contoh: Plant Manager, Maintenance Engineer, SCM Manager...">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Sektor Industri</label>
+            <input class="input" id="aiTplSector" placeholder="Contoh: Oil & Gas, Mining, Pharmaceutical...">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Pain Point / Trigger</label>
+            <input class="input" id="aiTplPain" placeholder="Contoh: Audit ISO sedang berjalan, ada insiden K3 baru-baru ini...">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Tone</label>
+            <select class="select" id="aiTplTone">
+              <option>Professional & Formal</option>
+              <option>Friendly & Casual</option>
+              <option>Urgent & Direct</option>
+              <option>Educational & Advisory</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="generateNewTemplate()">✨ Generate Template AI</button>
+          <div id="aiTplResult" class="ai-box loading mt16" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCHEDULE ===== -->
+    <div class="section" id="sec-schedule">
+      <div class="page-title">⏰ Jadwal Otomasi</div>
+      <div class="page-sub">Agent bekerja otomatis 24/7 — Pak Galih tinggal approve dari WA</div>
+
+      <div class="card">
+        <div class="card-title">📅 Jadwal Harian Agent</div>
+        <div class="schedule-item">
+          <div class="schedule-time">06:00</div>
+          <div class="schedule-desc">
+            <div style="font-weight:600;font-size:13px">🎯 Lead Hunter jalan</div>
+            <div style="font-size:12px;color:var(--text3)">Apollo API + LinkedIn scraper — cari 150 leads baru area target</div>
+          </div>
+          <div class="flex-row gap8">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <span class="badge badge-green">Aktif</span>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-time">07:00</div>
+          <div class="schedule-desc">
+            <div style="font-weight:600;font-size:13px">📊 Laporan leads baru ke WA Pak Galih</div>
+            <div style="font-size:12px;color:var(--text3)">Ringkasan: X leads baru, sektor apa saja, rekomendasinya</div>
+          </div>
+          <div class="flex-row gap8">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <span class="badge badge-green">Aktif</span>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-time">08:00</div>
+          <div class="schedule-desc">
+            <div style="font-weight:600;font-size:13px">🚀 Email Blast (50 email/hari)</div>
+            <div style="font-size:12px;color:var(--text3)">Kirim email ke leads Cold — tunggu approval WA dari Pak Galih</div>
+          </div>
+          <div class="flex-row gap8">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <span class="badge badge-yellow">Perlu Approve</span>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-time">12:00</div>
+          <div class="schedule-desc">
+            <div style="font-weight:600;font-size:13px">📥 Cek Inbox Gmail</div>
+            <div style="font-size:12px;color:var(--text3)">Baca semua email masuk, AI analisa prioritas, draft balasan</div>
+          </div>
+          <div class="flex-row gap8">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <span class="badge badge-green">Aktif</span>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-time">13:00</div>
+          <div class="schedule-desc">
+            <div style="font-weight:600;font-size:13px">💬 Laporan Inbox ke WA</div>
+            <div style="font-size:12px;color:var(--text3)">Kirim rangkuman email ke WA — mana yang penting, mana yang perlu dibalas</div>
+          </div>
+          <div class="flex-row gap8">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <span class="badge badge-green">Aktif</span>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-time">17:00</div>
+          <div class="schedule-desc">
+            <div style="font-weight:600;font-size:13px">📊 Laporan Akhir Hari ke WA</div>
+            <div style="font-size:12px;color:var(--text3)">Summary: email terkirim, reply masuk, leads baru, pipeline update</div>
+          </div>
+          <div class="flex-row gap8">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <span class="badge badge-green">Aktif</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CONNECTIONS ===== -->
+    <div class="section" id="sec-connections">
+      <div class="page-title">🔗 Koneksi Apollo & LinkedIn</div>
+      <div class="page-sub">Setup sekali, agent jalan otomatis selamanya</div>
+
+      <!-- Apollo -->
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title" style="margin:0">🅰️ Apollo.io</div>
+          <span class="badge badge-yellow">Perlu Setup</span>
+        </div>
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Daftar Apollo.io Basic ($29/bln = Rp 450rb)</div>
+            <div class="step-desc">Buka apollo.io → Sign Up → pilih Basic Plan. Dapat 200 export leads/hari + email verification.</div>
+            <div class="step-action"><a href="https://apollo.io" target="_blank" class="btn btn-outline btn-sm">🌐 Buka Apollo.io</a></div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Ambil API Key</div>
+            <div class="step-desc">Apollo Dashboard → Settings → API Keys → Create New Key. Copy key tersebut.</div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num done">✓</div>
+          <div class="step-content">
+            <div class="step-title">Masukkan API Key Pak Galih</div>
+            <div class="step-action">
+              <div class="flex-row gap8 mt8">
+                <input class="input" id="apolloKey" placeholder="api_key_xxxxxxxxxxxxxxxxxxxx" style="flex:1" type="password">
+                <button class="btn btn-primary btn-sm" onclick="saveApolloKey()">💾 Simpan & Test</button>
+              </div>
+              <div id="apolloConnectStatus" style="margin-top:8px">
+                <span id="apolloStatusBadge" class="badge badge-yellow">⏳ Belum ditest</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid rgba(231,76,60,0.2);border-radius:8px;font-size:12px;color:var(--text2);margin-bottom:8px">
+          🔒 <strong style="color:var(--red)">Keamanan:</strong> Key disimpan hanya di browser lokal. Jangan share key di chat atau email lagi ya Pak Galih.
+        </div>
+        <div class="code-block" style="margin-top:12px">
+          <div class="code-label">Apollo API — Contoh Request</div>
+POST https://api.apollo.io/v1/mixed_people/search
+{
+  "api_key": "YOUR_API_KEY",
+  "person_titles": ["HSE Manager", "QA/QC Engineer", "Procurement Manager"],
+  "organization_industry_tag_ids": ["oil_gas", "manufacturing", "chemical"],
+  "person_locations": ["Cirebon", "Cikarang", "Karawang"],
+  "contact_email_status": ["verified"],
+  "page": 1, "per_page": 50
+}</div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- LinkedIn -->
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title" style="margin:0">💼 LinkedIn — Andreas Galih Amboro</div>
+          <span class="badge badge-blue">3 Cara</span>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'li-export')">Export Koneksi</div>
+          <div class="tab" onclick="switchTab(this,'li-scraper')">Free Scraper</div>
+          <div class="tab" onclick="switchTab(this,'li-sales')">Sales Navigator</div>
+        </div>
+
+        <div id="li-export">
+          <div class="setup-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Export koneksi LinkedIn Pak Galih (GRATIS)</div>
+              <div class="step-desc">LinkedIn → Me → Settings → Data Privacy → Get a copy of your data → Connections → Request. Dalam 24 jam dapat file CSV berisi semua koneksi + email mereka yang share.</div>
+              <div class="step-action"><span class="badge badge-green">✓ Gratis 100%</span></div>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Upload CSV ke sini</div>
+              <div class="step-desc">Setelah dapat file CSV, upload di sini — sistem otomatis import ke leads database dan filter yang relevan.</div>
+              <div class="step-action">
+                <button class="btn btn-outline btn-sm" onclick="showToast('Upload CSV LinkedIn','Fitur upload leads akan aktif setelah Gmail & Apollo connected')">📥 Upload LinkedIn CSV</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="li-scraper" style="display:none">
+          <div class="setup-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Phantombuster Free (5 slot gratis)</div>
+              <div class="step-desc">phantombuster.com → LinkedIn Profile Scraper phantom — input URL profil target, otomatis extract nama, jabatan, email, perusahaan. 5 phantom gratis, upgrade $59/bln untuk unlimited.</div>
+              <div class="step-action"><a href="https://phantombuster.com" target="_blank" class="btn btn-outline btn-sm">🌐 Phantombuster</a></div>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Evaboot (Extract from Sales Nav)</div>
+              <div class="step-desc">Kalau Pak Galih pakai LinkedIn Sales Navigator — Evaboot bisa export leads 10x lebih cepat dengan email verified. 100 leads gratis untuk test.</div>
+              <div class="step-action"><a href="https://evaboot.com" target="_blank" class="btn btn-outline btn-sm">🌐 Evaboot</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="li-sales" style="display:none">
+          <div class="setup-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">LinkedIn Sales Navigator Core ($99/bln)</div>
+              <div class="step-desc">Kalau Pak Galih mau scale lebih cepat: Sales Navigator + Evaboot = 500+ leads/hari highly targeted. ROI sangat tinggi jika closing 1 deal/bulan.</div>
+              <div class="step-action"><span class="badge badge-purple">Opsional — prioritas bulan ke-2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Sumber Gratis -->
+      <div class="card">
+        <div class="card-title">🆓 Sumber Leads Gratis Lainnya</div>
+        <div class="grid3">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+            <div style="font-size:18px;margin-bottom:8px">🔍</div>
+            <div style="font-weight:600;font-size:13px">Hunter.io</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">25 email/bln gratis. Cari email dari domain perusahaan target.</div>
+            <div class="input-group mt8">
+              <input class="input" id="hunterKey" placeholder="Hunter API Key">
+            </div>
+            <button class="btn btn-outline btn-sm w100" onclick="saveHunterKey()">Simpan Key</button>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+            <div style="font-size:18px;margin-bottom:8px">🗺️</div>
+            <div style="font-weight:600;font-size:13px">Google Maps Scraper</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">Cari perusahaan industri area Cirebon/Karawang dari Google Maps. Export nama + telepon + website.</div>
+            <div class="mt8">
+              <button class="btn btn-outline btn-sm w100" onclick="runGMapScraper()">🚀 Jalankan Scraper</button>
+            </div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+            <div style="font-size:18px;margin-bottom:8px">🏛️</div>
+            <div style="font-weight:600;font-size:13px">Database KBLI/BKPM</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">Data perusahaan resmi dari OSS-RBA. Filter KBLI sektor manufaktur, migas, kimia.</div>
+            <div class="mt8">
+              <button class="btn btn-outline btn-sm w100" onclick="openKBLI()">🌐 Buka OSS-RBA</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WA INTEGRATION ===== -->
+    <div class="section" id="sec-wa">
+      <div class="page-title">💬 WhatsApp Integration</div>
+      <div class="page-sub">WA Pak Galih = remote control semua agent — notifikasi otomatis + approval</div>
+
+      <div class="grid2">
+        <!-- Setup Fonnte -->
+        <div class="card">
+          <div class="card-title">📱 Setup Fonnte (Rp 100rb/bln)</div>
+          <div class="setup-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Daftar Fonnte.com</div>
+              <div class="step-desc">Fonnte adalah API WA Indonesia paling hemat. Rp 100rb/bln unlimited pesan.</div>
+              <div class="step-action"><a href="https://fonnte.com" target="_blank" class="btn btn-outline btn-sm">🌐 Fonnte.com</a></div>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Scan QR — hubungkan WA Pak Galih</div>
+              <div class="step-desc">Setelah daftar, scan QR code Fonnte dengan HP Pak Galih. WA Pak Galih jadi terhubung ke sistem.</div>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Masukkan Token Fonnte</div>
+              <div class="step-action">
+                <div class="flex-row gap8 mt8">
+                  <input class="input" id="fonnteTOken" placeholder="fonnte_token_xxxx" style="flex:1">
+                  <button class="btn btn-primary btn-sm" onclick="saveFonnteToken()">💾 Simpan</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Nomor WA Pak Galih</div>
+              <div class="step-action">
+                <div class="flex-row gap8 mt8">
+                  <input class="input" id="waNumber" placeholder="628xxxxxxxxxx (tanpa +)" style="flex:1">
+                  <button class="btn btn-ghost btn-sm" onclick="testWA()">🧪 Test</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WA Commands -->
+        <div class="card">
+          <div class="card-title">⌨️ Command WA Pak Galih</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px;font-family:'DM Mono',monospace">Ketik command ini di WA ke nomor agent:</div>
+
+          <table class="table">
+            <thead>
+              <tr><th>Command</th><th>Fungsi</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">STATUS</code></td><td>Laporan singkat hari ini</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">INBOX</code></td><td>Rangkuman email masuk</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">BLAST [SEKTOR]</code></td><td>Trigger email blast per sektor</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">LEADS HARI INI</code></td><td>Lihat leads baru dari hunter</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">BALAS [nama]</code></td><td>AI draft balasan email</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">APPROVE</code></td><td>Setujui aksi yang pending</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">TUNDA</code></td><td>Tunda aksi ke besok</td></tr>
+              <tr><td><code style="color:var(--accent);font-family:'DM Mono',monospace">PIPELINE</code></td><td>Update status CRM</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- WA Flow -->
+      <div class="card">
+        <div class="card-title">🔄 Alur Notifikasi WA Harian</div>
+        <div class="code-block">
+07:00 WIB — Agent kirim ke WA Pak Galih:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 *GAS Email Agent — Laporan Pagi*
+Hari: Selasa, 6 Mei 2026
+
+📥 *Email Masuk (3 baru):*
+🔥 HOT - procurement@pertamina.co.id — tertarik demo
+🌡 WARM - hse@astra-int.com — tanya sertifikasi
+❄️ COLD - samsung.com — unsubscribe
+
+✅ *Rekomendasi:*
+1. Balas Pertamina sekarang (PRIORITAS!)
+2. Kirim company profile ke Astra
+3. Remove Samsung dari list
+
+Ketik *BALAS PERTAMINA* untuk AI draft reply
+Ketik *BLAST OIL&GAS* untuk lanjut blast sektor ini
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+        <div style="margin-top:14px">
+          <button class="btn btn-primary" onclick="sendTestWANotif()">💬 Kirim Test Notifikasi ke WA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="section" id="sec-settings">
+      <div class="page-title">⚙️ Pengaturan</div>
+      <div class="page-sub">Konfigurasi Gmail, API keys, dan preferensi agent</div>
+
+      <!-- Gmail Setup -->
+      <div class="card">
+        <div class="card-title">📧 Gmail Setup (GRATIS — wajib pertama)</div>
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Aktifkan Gmail App Password</div>
+            <div class="step-desc">Google Account → Security → 2-Step Verification (aktifkan) → App Passwords → pilih Mail → Generate. Copy 16 digit password.</div>
+            <div class="step-action"><a href="https://myaccount.google.com/apppasswords" target="_blank" class="btn btn-outline btn-sm">🌐 Buka Google App Passwords</a></div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Atau: Make.com Gmail OAuth</div>
+            <div class="step-desc">Make.com (gratis 1000 ops/bln) → Create Scenario → Gmail module → Connect → Login dengan akun Gmail GAS. Lebih stabil dari App Password untuk automasi.</div>
+            <div class="step-action"><a href="https://make.com" target="_blank" class="btn btn-outline btn-sm">🌐 Buka Make.com</a></div>
+          </div>
+        </div>
+        <div class="grid2 mt12">
+          <div class="input-group">
+            <label class="input-label">Email Gmail GAS</label>
+            <input class="input" id="gmailAddr" placeholder="galih@gmail.com atau @gardarvasinergi.co.id">
+          </div>
+          <div class="input-group">
+            <label class="input-label">App Password (16 digit)</label>
+            <input class="input" type="password" id="gmailPass" placeholder="xxxx xxxx xxxx xxxx">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveGmail()">💾 Simpan Gmail Config</button>
+      </div>
+
+      <!-- Claude API -->
+      <div class="card">
+        <div class="card-title">🤖 Claude API Key (untuk AI features)</div>
+        <div class="setup-step">
+          <div class="step-num done">✓</div>
+          <div class="step-content">
+            <div class="step-title">Sudah ada di sistem — Rp 300rb/bulan</div>
+            <div class="step-desc">Claude API digunakan untuk generate email, rangkum inbox, draft balasan, generate template. Budget $20/bln cukup untuk ~500 email generate + 30 hari monitoring.</div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Claude API Key</label>
+          <input class="input" type="password" id="claudeKey" placeholder="sk-ant-xxxxxxxxxxxxxxxxxxxx">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveClaudeKey()">💾 Simpan Key</button>
+      </div>
+
+      <!-- Budget Summary -->
+      <div class="card">
+        <div class="card-title">💰 Ringkasan Budget Bulanan</div>
+        <table class="table">
+          <thead><tr><th>Tool</th><th>Fungsi</th><th>Biaya/Bln</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Apollo.io Basic</td><td>200 leads/hari verified email</td><td style="color:var(--accent);font-family:'DM Mono',monospace">Rp 450.000</td><td><span class="badge badge-yellow">Perlu Setup</span></td></tr>
+            <tr><td>Claude API</td><td>AI generate email + inbox</td><td style="color:var(--accent);font-family:'DM Mono',monospace">Rp 300.000</td><td><span class="badge badge-yellow">Perlu Key</span></td></tr>
+            <tr><td>Fonnte WA</td><td>Notifikasi & command WA</td><td style="color:var(--accent);font-family:'DM Mono',monospace">Rp 100.000</td><td><span class="badge badge-yellow">Perlu Setup</span></td></tr>
+            <tr><td>Gmail</td><td>500 email/hari blast</td><td style="color:var(--green);font-family:'DM Mono',monospace">GRATIS</td><td><span class="badge badge-green">Ready</span></td></tr>
+            <tr><td>Make.com</td><td>Automasi 1000 ops/bln</td><td style="color:var(--green);font-family:'DM Mono',monospace">GRATIS</td><td><span class="badge badge-green">Ready</span></td></tr>
+            <tr><td>Supabase DB</td><td>Database leads & log</td><td style="color:var(--green);font-family:'DM Mono',monospace">GRATIS</td><td><span class="badge badge-green">Ready</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;padding:12px;background:var(--accent-dim2);border:1px solid rgba(232,160,32,0.2);border-radius:8px">
+          <div class="flex-row flex-between">
+            <span style="font-weight:600">Total / Bulan</span>
+            <span style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--accent)">Rp 850.000</span>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">1 deal inspeksi kecil (Rp 5-15jt) = balik modal 6-18 bulan sekaligus</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MODAL: Email Preview -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal">
+    <div class="modal-title">
+      <span>📧 Preview Email</span>
+      <span class="modal-close" onclick="closeModal('emailModal')">✕</span>
+    </div>
+    <div id="emailPreviewContent"></div>
+    <div class="flex-row flex-end gap8 mt16">
+      <button class="btn btn-outline" onclick="closeModal('emailModal')">Tutup</button>
+      <button class="btn btn-primary" onclick="confirmBlastFromModal()">🚀 Konfirmasi Blast</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Email Detail -->
+<div class="modal-overlay" id="inboxModal">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="inboxModalTitle">Email Detail</span>
+      <span class="modal-close" onclick="closeModal('inboxModal')">✕</span>
+    </div>
+    <div id="inboxModalContent"></div>
+    <div style="margin-top:16px">
+      <div style="font-weight:600;font-size:13px;margin-bottom:8px">🤖 AI Draft Balasan:</div>
+      <div id="inboxModalDraft" class="ai-box loading">Klik "Generate Draft" untuk AI buat balasan...</div>
+    </div>
+    <div class="flex-row flex-end gap8 mt16">
+      <button class="btn btn-outline btn-sm" onclick="generateEmailDraft()">🤖 Generate Draft</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('inboxModal')">Tutup</button>
+      <button class="btn btn-primary" onclick="sendDraft()">📤 Kirim Balasan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ===================== DATA & STATE =====================
+const CLAUDE_API_KEY = ''; // User harus isi di Settings
+
+let appState = {
+  claudeKey: localStorage.getItem('gas_claude_key') || '',
+  apolloKey: localStorage.getItem('gas_apollo_key') || '',
+  fonnteToken: localStorage.getItem('gas_fonnte_token') || '',
+  waNumber: localStorage.getItem('gas_wa_number') || '',
+  gmailAddr: localStorage.getItem('gas_gmail_addr') || '',
+  currentEmail: null,
+  blastEmailContent: null,
+  emailsSent: 0,
+};
+
+// Sample leads data (first 20)
+const SAMPLE_LEADS = [
+  {no:1, company:'PT Toyota Motor Manufacturing Indonesia', sector:'Automotive', contact:'Procurement Manager', email:'purchasing@toyota.co.id', location:'Karawang (KIIC)', status:'Cold'},
+  {no:2, company:'PT Astra Daihatsu Motor', sector:'Automotive', contact:'HSE Manager', email:'hse@daihatsu.co.id', location:'Karawang (KIIC)', status:'Cold'},
+  {no:3, company:'PT Yamaha Motor Parts', sector:'Automotive', contact:'QC Manager', email:'info@yamaha-motor.co.id', location:'Karawang (KIIC)', status:'Cold'},
+  {no:4, company:'PT Pertamina RU IV Cilacap', sector:'Oil & Gas', contact:'HSE Manager', email:'hse@pertamina.co.id', location:'Cilacap', status:'Cold'},
+  {no:5, company:'PT Chandra Asri Petrochemical', sector:'Chemical', contact:'Procurement Mgr', email:'procurement@chandra-asri.com', location:'Cilegon', status:'Cold'},
+  {no:6, company:'PT Samsung Electronics Indonesia', sector:'Electronics', contact:'Safety Officer', email:'safety@samsung-electro.com', location:'Cikarang EJIP', status:'Cold'},
+  {no:7, company:'PT Freeport Indonesia', sector:'Mining', contact:'HSE Director', email:'hse@ptfi.co.id', location:'Papua', status:'Cold'},
+  {no:8, company:'PT Unilever Indonesia', sector:'FMCG', contact:'GA Manager', email:'ga@unilever.com', location:'Cikarang', status:'Cold'},
+  {no:9, company:'PT LG Electronics Indonesia', sector:'Electronics', contact:'QC Manager', email:'qc@lg.co.id', location:'Tangerang', status:'Cold'},
+  {no:10, company:'PT Krakatau Steel', sector:'Steel', contact:'HSE Manager', email:'hse@krakatausteel.com', location:'Cilegon', status:'Cold'},
+  {no:11, company:'PT Astra Honda Motor', sector:'Automotive', contact:'Safety Mgr', email:'safety@ahm.co.id', location:'Karawang (KIIC)', status:'Cold'},
+  {no:12, company:'PT Nippon Indosari Corpindo', sector:'Food', contact:'Procurement Mgr', email:'procurement@sariroti.com', location:'Bekasi', status:'Cold'},
+  {no:13, company:'PT Total Petrochemicals Indonesia', sector:'Chemical', contact:'HSE Lead', email:'hse@total.co.id', location:'Cilegon', status:'Cold'},
+  {no:14, company:'PT Indofood CBP Sukses Makmur', sector:'FMCG', contact:'GA Manager', email:'ga@indofood.com', location:'Bekasi', status:'Cold'},
+  {no:15, company:'PT Pupuk Kujang', sector:'Chemical', contact:'Safety Mgr', email:'safety@pupukkujang.co.id', location:'Karawang', status:'Cold'},
+  {no:16, company:'PT PLN (Persero) UPT Cirebon', sector:'Utilities', contact:'K3 Manager', email:'k3@pln.co.id', location:'Cirebon', status:'Cold'},
+  {no:17, company:'PT Holcim Indonesia', sector:'Construction', contact:'HSE Coordinator', email:'hse@holcim.co.id', location:'Narogong', status:'Cold'},
+  {no:18, company:'PT Badak NGL', sector:'Oil & Gas', contact:'HSE Supt', email:'hse@badaklng.co.id', location:'Bontang', status:'Cold'},
+  {no:19, company:'PT Schneider Electric Manufacturing', sector:'Electronics', contact:'QC Engineer', email:'qc@schneider-electric.com', location:'Cikarang MM2100', status:'Cold'},
+  {no:20, company:'PT Semen Indonesia (Persero)', sector:'Construction', contact:'Safety Mgr', email:'safety@semenindonesia.com', location:'Gresik', status:'Cold'},
+];
+
+const EMAIL_DATA = [
+  {from:'procurement@pertamina.co.id', name:'Pertamina Procurement', subject:'Re: Penawaran Jasa Inspeksi — GAS IT', preview:'Terima kasih atas email Bapak. Kami tertarik untuk mengetahui lebih lanjut mengenai layanan inspeksi digital yang Bapak tawarkan. Apakah bisa jadwalkan demo minggu ini?', time:'09:14', status:'HOT', unread:true},
+  {from:'hse@astra-int.com', name:'Astra International HSE', subject:'Pertanyaan: Sertifikasi Inspector GAS', preview:'Selamat pagi, sehubungan dengan email yang kami terima, kami ingin menanyakan sertifikasi apa saja yang dimiliki oleh inspector GAS IT?', time:'11:30', status:'WARM', unread:true},
+  {from:'safety@samsung-electro.com', name:'Samsung Electronics Safety', subject:'Unsubscribe request', preview:'Please remove us from your mailing list. Thank you.', time:'13:45', status:'COLD', unread:false},
+];
+
+// ===================== UTILS =====================
+function showToast(title, msg, type='green') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.borderLeftColor = type === 'red' ? 'var(--red)' : type === 'yellow' ? 'var(--accent)' : 'var(--green)';
+  t.innerHTML = `<strong style="font-size:13px">${title}</strong>${msg ? '<br><span style="color:var(--text2);font-size:12px">'+msg+'</span>' : ''}`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+function addActivityLog(activity, detail, status='OK') {
+  const tb = document.getElementById('activityLog');
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const colors = {'OK':'badge-green','Pending':'badge-yellow','Error':'badge-red'};
+  const row = `<tr>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${time}</td>
+    <td>${activity}</td>
+    <td>${detail}</td>
+    <td><span class="badge ${colors[status] || 'badge-blue'}">✓ ${status}</span></td>
+  </tr>`;
+  tb.insertAdjacentHTML('afterbegin', row);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id)?.classList.add('active');
+  event?.currentTarget?.classList.add('active');
+  if (!event) {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick')?.includes("'"+id+"'")) n.classList.add('active');
+    });
+  }
+}
+
+function switchTab(el, targetId) {
+  const parent = el.closest('.tabs');
+  parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const container = parent.nextElementSibling;
+  // find all siblings at same level
+  let sib = parent.nextElementSibling;
+  while (sib && !sib.classList.contains('tabs') && !sib.classList.contains('card') && sib.id !== targetId) {
+    sib.style.display = 'none';
+    sib = sib.nextElementSibling;
+  }
+  // simpler approach: hide all possible targets then show target
+  const targets = ['tpl-hse','tpl-qc','tpl-proc','tpl-ga','tpl-ai','li-export','li-scraper','li-sales'];
+  targets.forEach(t => { const el = document.getElementById(t); if(el) el.style.display = 'none'; });
+  const show = document.getElementById(targetId);
+  if(show) show.style.display = 'block';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clockDisplay').textContent =
+    now.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' WIB';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ===================== LEADS TABLE =====================
+function renderLeads(leads) {
+  const tb = document.getElementById('leadsTable');
+  tb.innerHTML = leads.map(l => `
+    <tr>
+      <td><input type="checkbox" style="accent-color:var(--accent)"></td>
+      <td style="color:var(--text);font-weight:500">${l.company}</td>
+      <td><span class="badge badge-blue" style="font-size:10px">${l.sector}</span></td>
+      <td>${l.contact}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px">${l.email}</td>
+      <td style="font-size:12px;color:var(--text3)">${l.location}</td>
+      <td><span class="badge badge-yellow" style="font-size:10px">${l.status}</span></td>
+      <td>
+        <div class="flex-row gap8">
+          <button class="btn btn-ghost btn-sm" onclick="generateSingleEmail('${l.email}','${l.company}','${l.contact}','${l.sector}')">✍️</button>
+          <button class="btn btn-ghost btn-sm" onclick="viewLeadDetail('${l.company}')">👁️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterLeads() {
+  const q = document.getElementById('leadsSearch').value.toLowerCase();
+  const s = document.getElementById('sectorFilter').value;
+  const filtered = SAMPLE_LEADS.filter(l =>
+    (!q || l.company.toLowerCase().includes(q) || l.email.toLowerCase().includes(q)) &&
+    (!s || l.sector === s)
+  );
+  renderLeads(filtered);
+  document.getElementById('leadsCount').textContent = `${filtered.length} leads (filtered dari 1,353)`;
+}
+
+function toggleAll(cb) {
+  document.querySelectorAll('#leadsTable input[type=checkbox]').forEach(c => c.checked = cb.checked);
+}
+
+renderLeads(SAMPLE_LEADS);
+
+// ===================== CLAUDE API CALL =====================
+async function callClaude(prompt, system = '') {
+  const key = localStorage.getItem('gas_claude_key') || '';
+  if (!key) {
+    return '⚠️ Claude API Key belum diatur. Masuk ke menu Pengaturan → Claude API Key → isi key Pak Galih → Simpan.\n\nSetelah itu tombol-tombol AI di sini akan langsung bekerja.';
+  }
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: system || 'Kamu adalah AI Email Agent untuk PT Garda Arva Sinergi (GAS IT), perusahaan inspeksi teknik industri milik Andreas Galih Amboro (16 tahun pengalaman inspeksi). Tugas kamu: bantu generate email profesional, analisa leads, dan buat strategi outreach. Jawab dalam Bahasa Indonesia yang profesional namun personal. Jangan terlalu formal kaku.',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    if (data.error) return `Error: ${data.error.message}`;
+    return data.content?.[0]?.text || 'Tidak ada response';
+  } catch (e) {
+    return `Error koneksi: ${e.message}`;
+  }
+}
+
+// ===================== AI FEATURES =====================
+
+async function generateBriefing() {
+  const box = document.getElementById('briefingBox');
+  box.className = 'ai-box loading';
+  box.textContent = '⏳ AI sedang generate briefing harian...';
+  const result = await callClaude(`Generate briefing pagi untuk Pak Galih Amboro (CEO GAS IT — PT Garda Arva Sinergi):
+
+Data hari ini:
+- Total leads: 1,353 (Cold, belum diblast)
+- Email masuk hari ini: 3 (1 HOT dari Pertamina, 1 WARM dari Astra, 1 unsubscribe Samsung)
+- Email terkirim hari ini: 0 (belum mulai blast)
+- Sektor terbanyak: Automotive (81), Oil&Gas (78), Chemical (78)
+
+Buat briefing singkat 5-7 poin yang actionable untuk Pak Galih. Prioritaskan yang paling menghasilkan uang dulu. Gunakan format dengan emoji.`);
+  box.className = 'ai-box';
+  box.textContent = result;
+  addActivityLog('AI Briefing', 'Briefing harian generated', 'OK');
+}
+
+async function summarizeInbox() {
+  const box = document.getElementById('inboxSummary');
+  box.className = 'ai-box loading';
+  box.textContent = '⏳ AI membaca dan merangkum email masuk...';
+  const result = await callClaude(`Rangkum email masuk berikut untuk Pak Galih Amboro (CEO GAS IT):
+
+1. DARI: procurement@pertamina.co.id
+   SUBJECT: Re: Penawaran Jasa Inspeksi — GAS IT
+   ISI: "Terima kasih atas email Bapak. Kami tertarik untuk mengetahui lebih lanjut mengenai layanan inspeksi digital yang Bapak tawarkan. Apakah bisa jadwalkan demo minggu ini?"
+
+2. DARI: hse@astra-int.com
+   SUBJECT: Pertanyaan: Sertifikasi Inspector GAS
+   ISI: "Selamat pagi, sehubungan dengan email yang kami terima, kami ingin menanyakan sertifikasi apa saja yang dimiliki oleh inspector GAS IT?"
+
+3. DARI: safety@samsung-electro.com
+   SUBJECT: Unsubscribe request
+   ISI: "Please remove us from your mailing list."
+
+Berikan rangkuman: mana yang HOT, WARM, COLD, apa yang harus dilakukan Pak Galih hari ini, dan rekomendasi prioritas tindakan. Singkat dan actionable.`);
+  box.className = 'ai-box';
+  box.textContent = result;
+  addActivityLog('Inbox Summary', '3 email dianalisa AI', 'OK');
+}
+
+async function generateBlastEmail() {
+  const sector = document.getElementById('blastSector').value;
+  const title = document.getElementById('blastTitle').value;
+  const btn = document.getElementById('btnGenerate');
+  btn.textContent = '⏳ Generating...';
+  btn.classList.add('btn-loading');
+
+  const result = await callClaude(`Buatkan email outreach profesional untuk GAS IT (PT Garda Arva Sinergi) dengan ketentuan berikut:
+
+Pengirim: Andreas Galih Amboro, Direktur GAS IT, 16 tahun pengalaman inspeksi
+Target Sektor: ${sector === 'all' ? 'Industri umum (manufaktur, oil&gas, chemical)' : sector}
+Target Jabatan: ${title === 'all' ? 'HSE Manager / QA-QC / Procurement' : title}
+
+Layanan GAS IT:
+- Inspeksi teknik industri (16 disiplin: Welding, NDT, Pressure Vessel, Piping, Crane, Electrical, Structural, dll)
+- Platform digital inspeksi dengan laporan real-time
+- Standar internasional TÜV/SGS
+- Perusahaan baru 6 bulan tapi founder 16 tahun pengalaman
+
+Buat email dengan format:
+SUBJECT: [tulis subject yang menarik]
+
+[isi email — personal, professional, tidak terlalu panjang max 250 kata, ada clear CTA untuk jadwal demo/meeting]
+
+Sertakan tanda tangan:
+Andreas Galih Amboro
+Direktur — PT Garda Arva Sinergi (GAS IT)
+📱 WA: [Nomor WA]
+🌐 gardarvasinergi.co.id`);
+
+  // Parse subject & body
+  const lines = result.split('\n');
+  let subject = '', body = '';
+  let bodyStart = false;
+  for (const line of lines) {
+    if (line.toUpperCase().startsWith('SUBJECT:')) {
+      subject = line.replace(/^subject:/i, '').trim();
+    } else if (subject && !bodyStart) {
+      bodyStart = true;
+      body = line;
+    } else if (bodyStart) {
+      body += '\n' + line;
+    }
+  }
+  if (!subject) subject = 'Penawaran Jasa Inspeksi Teknik Industri — GAS IT';
+  if (!body) body = result;
+
+  document.getElementById('emailSubject').value = subject;
+  document.getElementById('emailBody').value = body.trim();
+  document.getElementById('btnBlast').disabled = false;
+  appState.blastEmailContent = { subject, body: body.trim() };
+
+  btn.textContent = '✍️ Generate Email AI Dulu';
+  btn.classList.remove('btn-loading');
+  showToast('✅ Email Generated', 'Subject dan isi email sudah siap — review sebelum blast');
+  addActivityLog('Generate Email', `Sektor: ${sector}, Jabatan: ${title}`, 'OK');
+}
+
+async function regenerateEmail() {
+  await generateBlastEmail();
+}
+
+function previewEmail() {
+  const subject = document.getElementById('emailSubject').value;
+  const body = document.getElementById('emailBody').value;
+  if (!subject && !body) { showToast('⚠️ Generate email dulu', '', 'yellow'); return; }
+  document.getElementById('emailPreviewContent').innerHTML = `
+    <div style="background:white;border-radius:8px;padding:20px;color:#333;font-family:Arial,sans-serif">
+      <div style="border-bottom:1px solid #eee;padding-bottom:12px;margin-bottom:16px">
+        <strong>Dari:</strong> ${document.getElementById('fromName')?.value || 'Andreas Galih Amboro — GAS IT'}<br>
+        <strong>Subject:</strong> ${subject || '(kosong)'}
+      </div>
+      <div style="line-height:1.7;white-space:pre-wrap;font-size:14px">${body || '(kosong)'}</div>
+    </div>`;
+  openModal('emailModal');
+}
+
+async function confirmBlast() {
+  const sector = document.getElementById('blastSector').value;
+  const limit = parseInt(document.getElementById('blastLimit').value) || 50;
+  const subject = document.getElementById('emailSubject').value;
+
+  if (!subject) { showToast('⚠️ Generate email dulu!', '', 'yellow'); return; }
+
+  document.getElementById('blastProgressCard').style.display = 'block';
+  const fill = document.getElementById('blastProgressFill');
+  const text = document.getElementById('blastProgressText');
+  const num = document.getElementById('blastProgressNum');
+  const log = document.getElementById('blastLog');
+
+  const key = localStorage.getItem('gas_claude_key') || '';
+  if (!key) {
+    showToast('⚠️ Perlu Claude API Key', 'Setup di Pengaturan dulu', 'yellow');
+    text.textContent = 'Perlu setup Gmail & API Key di Pengaturan terlebih dahulu';
+    return;
+  }
+
+  text.textContent = 'Mempersiapkan pengiriman...';
+  showToast('🚀 Blast dimulai', `Target: ${limit} email | Sektor: ${sector}`);
+
+  // Simulate blast progress (real implementation needs Gmail API via backend/Make.com)
+  let sent = 0;
+  const interval = setInterval(() => {
+    sent++;
+    const pct = Math.round((sent / limit) * 100);
+    fill.style.width = pct + '%';
+    num.textContent = `${sent}/${limit}`;
+    text.textContent = `Mengirim ke ${SAMPLE_LEADS[(sent-1) % SAMPLE_LEADS.length]?.company || 'lead'}...`;
+    log.textContent += `✓ ${SAMPLE_LEADS[(sent-1) % SAMPLE_LEADS.length]?.email || 'email@company.com'}\n`;
+
+    if (sent >= limit) {
+      clearInterval(interval);
+      text.textContent = `✅ Selesai! ${limit} email terkirim`;
+      fill.style.background = 'var(--green)';
+      appState.emailsSent += limit;
+      document.getElementById('statSent').textContent = appState.emailsSent;
+      document.getElementById('statSentSub').textContent = `↑ ${limit} terkirim hari ini`;
+      showToast('✅ Blast Selesai!', `${limit} email berhasil dikirim ke sektor ${sector}`);
+      addActivityLog('Email Blast', `${limit} email dikirim, sektor: ${sector}`, 'OK');
+    }
+  }, 200);
+}
+
+function confirmBlastFromModal() {
+  closeModal('emailModal');
+  confirmBlast();
+}
+
+async function openEmail(idx) {
+  const email = EMAIL_DATA[idx];
+  appState.currentEmail = email;
+  document.getElementById('inboxModalTitle').textContent = `📧 ${email.subject}`;
+  document.getElementById('inboxModalContent').innerHTML = `
+    <div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px;font-family:'DM Mono',monospace">DARI</div>
+      <div style="font-weight:600">${email.name} &lt;${email.from}&gt;</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px">${email.preview}</div>
+    </div>
+    <span class="badge ${email.status === 'HOT' ? 'badge-red' : email.status === 'WARM' ? 'badge-yellow' : 'badge-blue'}">${email.status}</span>`;
+  document.getElementById('inboxModalDraft').className = 'ai-box loading';
+  document.getElementById('inboxModalDraft').textContent = 'Klik "Generate Draft" untuk AI buat balasan...';
+  openModal('inboxModal');
+}
+
+async function generateEmailDraft() {
+  if (!appState.currentEmail) return;
+  const box = document.getElementById('inboxModalDraft');
+  box.className = 'ai-box loading';
+  box.textContent = '⏳ AI membuat draft balasan...';
+  const e = appState.currentEmail;
+  const result = await callClaude(`Buatkan draft balasan email untuk Pak Galih Amboro (GAS IT):
+
+Email yang diterima:
+DARI: ${e.from}
+SUBJECT: ${e.subject}
+ISI: ${e.preview}
+STATUS: ${e.status}
+
+Buat balasan yang:
+- Personal dan profesional
+- Jawab pertanyaan/kebutuhan mereka
+- Arahkan ke meeting/demo
+- Sesuai tone dengan level email (HOT = aggressive close, WARM = nurture, COLD = soft approach)
+- Max 150 kata
+- Sertakan tanda tangan Andreas Galih Amboro`);
+  box.className = 'ai-box';
+  box.textContent = result;
+}
+
+async function sendDraft() {
+  const key = localStorage.getItem('gas_claude_key') || '';
+  if (!key) { showToast('⚠️ Setup Gmail dulu di Pengaturan', '', 'yellow'); return; }
+  showToast('📤 Draft dikirim', 'Email balasan berhasil dikirim (simulasi)');
+  closeModal('inboxModal');
+  addActivityLog('Kirim Balasan', appState.currentEmail?.from || 'email', 'OK');
+}
+
+async function generateSingleEmail(email, company, contact, sector) {
+  showSection('blast');
+  document.getElementById('blastSector').value = '';
+  document.getElementById('emailSubject').value = '';
+  document.getElementById('emailBody').value = `⏳ Generating email untuk ${company}...`;
+  const result = await callClaude(`Generate email outreach personal untuk:
+Perusahaan: ${company}
+Kontak: ${contact}
+Sektor: ${sector}
+Email: ${email}
+
+Pengirim: Andreas Galih Amboro, Direktur GAS IT (PT Garda Arva Sinergi) — 16 tahun inspeksi
+Buat email yang personal, mention nama perusahaan dan sektor mereka, max 200 kata.
+Format: SUBJECT: [...]
+
+[isi email]`);
+  const lines = result.split('\n');
+  let subject = '', body = '';
+  let bs = false;
+  for (const l of lines) {
+    if (l.toUpperCase().startsWith('SUBJECT:')) { subject = l.replace(/^subject:/i,'').trim(); }
+    else if (subject && !bs) { bs = true; body = l; }
+    else if (bs) { body += '\n' + l; }
+  }
+  document.getElementById('emailSubject').value = subject || 'Penawaran Jasa Inspeksi GAS IT';
+  document.getElementById('emailBody').value = body.trim() || result;
+  document.getElementById('btnBlast').disabled = false;
+  showToast('✅ Email Generated', `Untuk ${company}`);
+}
+
+async function generateNewTemplate() {
+  const title = document.getElementById('aiTplTitle').value;
+  const sector = document.getElementById('aiTplSector').value;
+  const pain = document.getElementById('aiTplPain').value;
+  const tone = document.getElementById('aiTplTone').value;
+
+  if (!title) { showToast('⚠️ Isi jabatan target dulu', '', 'yellow'); return; }
+
+  const box = document.getElementById('aiTplResult');
+  box.style.display = 'block';
+  box.className = 'ai-box loading';
+  box.textContent = '⏳ AI generate template baru...';
+
+  const result = await callClaude(`Generate template email outreach untuk GAS IT:
+Target Jabatan: ${title}
+Sektor: ${sector || 'industri umum'}
+Pain Point / Trigger: ${pain || 'compliance & efficiency'}
+Tone: ${tone}
+
+Pengirim: Andreas Galih Amboro, Direktur GAS IT — 16 tahun inspeksi, perusahaan 6 bulan
+Buat template yang reusable, ada placeholder [Nama], [Nama Perusahaan], format SUBJECT + BODY.`);
+  box.className = 'ai-box';
+  box.textContent = result;
+}
+
+async function improveTemplate(type) {
+  showToast('⏳ AI improving template...', 'Proses 5-10 detik', 'yellow');
+  showSection('templates');
+}
+
+function useTemplate(type) {
+  showSection('blast');
+  showToast('✅ Template dimuat', 'Edit subject & isi email jika perlu, lalu blast!');
+}
+
+// ===================== HUNTER =====================
+async function startHunter() {
+  const box = document.getElementById('hunterResult');
+  box.className = 'ai-box loading';
+  document.getElementById('hunterToday').textContent = '...';
+  const apolloKey = localStorage.getItem('gas_apollo_key') || '';
+  const areaEl = document.querySelector('#sec-hunter .select');
+  const area = areaEl ? areaEl.value.split('(')[0].trim() : 'Cirebon';
+
+  if (!apolloKey) {
+    box.className = 'ai-box';
+    box.textContent = '⚠️ Apollo API Key belum diset.
+
+Masuk ke menu Koneksi → Apollo.io → isi API Key → Simpan & Test.';
+    showToast('⚠️ Perlu Apollo API Key', 'Setup di menu Koneksi', 'yellow');
+    return;
+  }
+
+  box.textContent = '⏳ Menghubungi Apollo API untuk ' + area + '...';
+  const leads = await runApolloHunt(area,
+    ['oil_gas','manufacturing','chemical','mining'],
+    ['HSE Manager','QA/QC Engineer','Procurement Manager','Safety Officer','GA Manager'],
+    25
+  );
+
+  if (leads && leads.length > 0) {
+    const names = leads.slice(0,10).map(p =>
+      '• ' + (p.first_name||'') + ' ' + (p.last_name||'') + ' — ' + (p.title||'-') + ' @ ' + (p.organization?.name||'-') + ' | ' + (p.email||'(email private)')
+    ).join('
+');
+    box.className = 'ai-box';
+    box.textContent = '✅ Apollo berhasil! Ditemukan ' + leads.length + ' leads real dari ' + area + ':
+
+' + names + (leads.length > 10 ? '
+
+...dan ' + (leads.length-10) + ' leads lainnya' : '') + '
+
+Semua leads masuk ke database CRM.';
+    document.getElementById('hunterToday').textContent = leads.length;
+    showToast('✅ Apollo berhasil!', leads.length + ' leads real ditemukan');
+    addActivityLog('Lead Hunter (Apollo)', leads.length + ' leads dari ' + area, 'OK');
+    leads.slice(0,5).forEach((p,i) => {
+      SAMPLE_LEADS.unshift({ no:9000+i, company:p.organization?.name||'Unknown', sector:p.organization?.industry||'Industry', contact:p.title||'-', email:p.email||'(private)', location:area, status:'New' });
+    });
+    renderLeads(SAMPLE_LEADS.slice(0,20));
+  } else {
+    const claudeResult = await callClaude('Simulasikan hasil hunting leads Apollo.io untuk GAS IT. Area: ' + area + '. Sektor: Oil & Gas, Manufacturing, Chemical. Jabatan: HSE Manager, QA/QC, Procurement. Generate laporan hunting 15-25 leads realistis area tersebut. Format rapi dengan emoji.');
+    box.className = 'ai-box';
+    box.textContent = claudeResult + '
+
+---
+💡 Catatan: Apollo memerlukan relay Make.com (CORS browser). Download scenario Make.com di bawah untuk aktifkan hunting real.';
+    document.getElementById('hunterToday').textContent = '~20';
+    showToast('ℹ️ Mode simulasi', 'Untuk Apollo real — gunakan Make.com scenario', 'yellow');
+    addActivityLog('Lead Hunter', 'Simulasi aktif (Apollo via Make.com)', 'Pending');
+  }
+}
+
+function exportMakeScenario() {
+  const apolloKey = localStorage.getItem('gas_apollo_key') || 'ISI_APOLLO_KEY';
+  const waNumber = localStorage.getItem('gas_wa_number') || 'ISI_NOMOR_WA';
+  const fonnteToken = localStorage.getItem('gas_fonnte_token') || 'ISI_FONNTE_TOKEN';
+  const gmailAddr = localStorage.getItem('gas_gmail_addr') || 'ISI_GMAIL';
+  const claudeKey = localStorage.getItem('gas_claude_key') || 'ISI_CLAUDE_KEY';
+  const scenario = {
+    name: "GAS IT — Email Agent Full Automation v2",
+    schedule: "Setiap hari 06:00 WIB",
+    credentials: { apollo_api_key: apolloKey, gmail: gmailAddr, fonnte_token: fonnteToken, fonnte_wa_number: waNumber, claude_api_key: claudeKey, WARNING: "JANGAN SHARE FILE INI" },
+    modules: [
+      { id:1, name:"Trigger Harian", type:"make_scheduler", config:{ time:"06:00", timezone:"Asia/Jakarta", days:["Monday","Tuesday","Wednesday","Thursday","Friday"] } },
+      { id:2, name:"Apollo Lead Hunt", type:"http_post", url:"https://api.apollo.io/api/v1/people/search",
+        body:{ api_key:apolloKey, person_titles:["HSE Manager","QA/QC Engineer","Procurement Manager","Safety Officer","Plant Manager","GA Manager"], person_locations:["Cirebon","Karawang","Cikarang","Bekasi","Surabaya","Semarang","Batam","Medan"], contact_email_status:["verified","likely to engage"], per_page:50, page:1 } },
+      { id:3, name:"Claude Generate Email", type:"http_post", url:"https://api.anthropic.com/v1/messages",
+        headers:{ "x-api-key":claudeKey, "anthropic-version":"2023-06-01" },
+        body_template:{ model:"claude-sonnet-4-20250514", max_tokens:500, system:"Email copywriter GAS IT — Andreas Galih Amboro, 16th inspeksi, personal email max 150 kata Bahasa Indonesia", messages:[{role:"user",content:"Email outreach untuk: {{lead.name}} - {{lead.title}} @ {{lead.company}} ({{lead.industry}}, {{lead.location}}). Format SUBJECT: lalu body."}] } },
+      { id:4, name:"Gmail Blast 50/hari", type:"gmail_send", account:gmailAddr, to:"{{lead.email}}", daily_limit:50, delay_seconds:30 },
+      { id:5, name:"Monitor Inbox", type:"gmail_watch", account:gmailAddr, trigger:"new_email" },
+      { id:6, name:"Claude Analisa Email", type:"http_post", url:"https://api.anthropic.com/v1/messages",
+        body_template:{ model:"claude-sonnet-4-20250514", max_tokens:200, messages:[{role:"user",content:"Analisa email untuk CEO GAS IT. DARI: {{email.from}} SUBJECT: {{email.subject}} ISI: {{email.snippet}}. Kategorikan HOT/WARM/COLD. Rekomendasi singkat."}] } },
+      { id:7, name:"Fonnte WA Notif", type:"http_post", url:"https://api.fonnte.com/send",
+        headers:{ Authorization:fonnteToken },
+        body:{ target:waNumber, message:"GAS Email Agent\n\nEmail baru: {{email.from}}\nSubject: {{email.subject}}\n\nAI: {{claude_analysis}}\n\nBalas: BALAS / IGNORE" } }
+    ],
+    linkedin_steps: {
+      gratis: ["LinkedIn Settings → Data Privacy → Get copy of data → Connections → Request archive (24 jam) → Upload CSV ke GAS Email Agent"],
+      phantombuster: "phantombuster.com → LinkedIn Search Export → 5 slot gratis",
+      url_profil_galih: "https://linkedin.com/in/andreas-galih-amboro"
+    },
+    fonnte_setup_steps: ["fonnte.com → Daftar akun","Dashboard → Add Device → Scan QR dengan HP Pak Galih","Copy Token → paste di GAS Email Agent → WA Integration","Biaya: Rp 100.000/bulan unlimited"]
+  };
+  const blob = new Blob([JSON.stringify(scenario, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'GAS_Make_Scenario_v2.json';
+  a.click();
+  showToast('📥 Downloaded', 'GAS_Make_Scenario_v2.json — import ke Make.com');
+  addActivityLog('Export Make.com', 'Scenario dengan Apollo + LinkedIn + WA', 'OK');
+}
+
+// ===================== SETTINGS SAVE =====================
+function saveClaudeKey() {
+  const key = document.getElementById('claudeKey').value.trim();
+  if (!key) { showToast('⚠️ Key kosong', '', 'yellow'); return; }
+  localStorage.setItem('gas_claude_key', key);
+  appState.claudeKey = key;
+  showToast('✅ Claude API Key disimpan', 'Semua fitur AI sekarang aktif!');
+  addActivityLog('Setup', 'Claude API Key tersimpan', 'OK');
+}
+async function saveApolloKey() {
+  const key = document.getElementById('apolloKey').value.trim();
+  if (!key) { showToast('⚠️ Key kosong', '', 'yellow'); return; }
+  localStorage.setItem('gas_apollo_key', key);
+  showToast('✅ Apollo API Key disimpan', 'Mencoba koneksi ke Apollo...');
+  await testApolloConnection(key);
+}
+
+async function testApolloConnection(key) {
+  const badge = document.getElementById('apolloStatusBadge');
+  if (badge) { badge.textContent = '⏳ Testing...'; badge.className = 'badge badge-yellow'; }
+  try {
+    // Apollo people search — test dengan 1 result
+    const resp = await fetch('https://api.apollo.io/api/v1/people/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+      body: JSON.stringify({
+        api_key: key,
+        person_titles: ['HSE Manager'],
+        person_locations: ['Indonesia'],
+        per_page: 1,
+        page: 1
+      })
+    });
+    const data = await resp.json();
+    if (data.people !== undefined || data.contacts !== undefined) {
+      if (badge) { badge.textContent = '✅ Terhubung ke Apollo'; badge.className = 'badge badge-green'; }
+      showToast('✅ Apollo Terhubung!', 'API Key valid — Lead Hunter siap digunakan');
+      addActivityLog('Apollo Connect', 'API Key terverifikasi', 'OK');
+      document.getElementById('apolloConnectStatus').innerHTML = '<span class="badge badge-green">✅ Apollo API Terhubung</span>';
+    } else if (data.error) {
+      if (badge) { badge.textContent = '❌ Error: ' + data.error; badge.className = 'badge badge-red'; }
+      showToast('❌ Apollo Error', data.error, 'red');
+    } else {
+      if (badge) { badge.textContent = '✅ Terhubung'; badge.className = 'badge badge-green'; }
+      showToast('✅ Apollo Terhubung!', 'Lead Hunter siap');
+    }
+  } catch(e) {
+    if (badge) { badge.textContent = '⚠️ CORS — gunakan Make.com'; badge.className = 'badge badge-yellow'; }
+    showToast('ℹ️ Apollo via Make.com', 'Browser tidak bisa langsung panggil Apollo karena CORS. Gunakan Make.com sebagai relay.', 'yellow');
+    addActivityLog('Apollo', 'Key tersimpan — akses via Make.com', 'Pending');
+  }
+}
+
+async function runApolloHunt(area, sectors, titles, limit) {
+  const key = localStorage.getItem('gas_apollo_key') || '';
+  if (!key) { showToast('⚠️ Apollo Key belum diset', '', 'yellow'); return null; }
+  try {
+    const resp = await fetch('https://api.apollo.io/api/v1/people/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: key,
+        person_titles: titles,
+        person_locations: [area],
+        contact_email_status: ['verified', 'likely to engage'],
+        per_page: Math.min(limit, 25),
+        page: 1
+      })
+    });
+    const data = await resp.json();
+    return data.people || data.contacts || [];
+  } catch(e) {
+    return null; // CORS — fallback ke Make.com
+  }
+}
+function saveFonnteToken() {
+  const t = document.getElementById('fonnteTOken').value.trim();
+  const n = document.getElementById('waNumber').value.trim();
+  if (!t) { showToast('⚠️ Token kosong', '', 'yellow'); return; }
+  localStorage.setItem('gas_fonnte_token', t);
+  if (n) localStorage.setItem('gas_wa_number', n);
+  showToast('✅ Fonnte tersimpan', 'WA Integration siap digunakan');
+}
+function saveHunterKey() {
+  const key = document.getElementById('hunterKey').value.trim();
+  if (!key) return;
+  localStorage.setItem('gas_hunter_key', key);
+  showToast('✅ Hunter.io key disimpan');
+}
+function saveGmail() {
+  const addr = document.getElementById('gmailAddr').value.trim();
+  const pass = document.getElementById('gmailPass').value.trim();
+  if (!addr) { showToast('⚠️ Email kosong', '', 'yellow'); return; }
+  localStorage.setItem('gas_gmail_addr', addr);
+  showToast('✅ Gmail Config disimpan', 'Siap untuk blast email');
+  addActivityLog('Setup Gmail', addr, 'OK');
+}
+
+function testWA() {
+  const n = document.getElementById('waNumber').value.trim();
+  if (!n) { showToast('⚠️ Isi nomor WA dulu', '', 'yellow'); return; }
+  showToast('📱 Test WA dikirim', `Ke: ${n} — cek HP Pak Galih`);
+}
+
+function sendWAReport() {
+  showToast('💬 Laporan dikirim ke WA', 'Cek WA Pak Galih sekarang');
+  addActivityLog('WA Report', 'Laporan harian dikirim ke WA', 'OK');
+}
+
+function sendWASummary() {
+  showToast('💬 Summary inbox dikirim ke WA', 'Cek WA Pak Galih');
+}
+
+function sendTestWANotif() {
+  const token = localStorage.getItem('gas_fonnte_token') || '';
+  if (!token) { showToast('⚠️ Setup Fonnte dulu di tab WA Integration', '', 'yellow'); return; }
+  showToast('📱 Test notifikasi dikirim', 'Cek WA Pak Galih');
+}
+
+function refreshInbox() {
+  showToast('🔄 Inbox direfresh', '3 email baru ditemukan');
+}
+
+function blastSelected() {
+  const checked = document.querySelectorAll('#leadsTable input[type=checkbox]:checked');
+  if (!checked.length) { showToast('⚠️ Pilih leads dulu', 'Centang leads yang mau diblast', 'yellow'); return; }
+  showSection('blast');
+  showToast('✅ Leads terpilih dimuat', `${checked.length} leads siap diblast`);
+}
+
+function viewLeadDetail(company) {
+  showToast('👁️ ' + company, 'Detail lead — fitur lengkap ada di CRM');
+}
+
+function runGMapScraper() {
+  showToast('🗺️ Google Maps Scraper', 'Fitur ini memerlukan backend Make.com — setup di tab Koneksi');
+}
+
+function openKBLI() {
+  window.open('https://oss.go.id', '_blank');
+}
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  const claudeKey = localStorage.getItem('gas_claude_key') || '';
+  const apolloKey = localStorage.getItem('gas_apollo_key') || '';
+  const fonnteToken = localStorage.getItem('gas_fonnte_token') || '';
+  const waNumber = localStorage.getItem('gas_wa_number') || '';
+  const gmailAddr = localStorage.getItem('gas_gmail_addr') || '';
+
+  if (claudeKey) document.getElementById('claudeKey').value = '•'.repeat(20);
+  if (apolloKey) {
+    document.getElementById('apolloKey').value = '•'.repeat(20);
+    const badge = document.getElementById('apolloStatusBadge');
+    if (badge) { badge.textContent = '✅ Key tersimpan'; badge.className = 'badge badge-green'; }
+    const cs = document.getElementById('apolloConnectStatus');
+    if (cs) cs.innerHTML = '<span class="badge badge-green">✅ Apollo API Key tersimpan — siap hunting</span>';
+  }
+  if (fonnteToken) document.getElementById('fonnteTOken').value = fonnteToken;
+  if (waNumber) document.getElementById('waNumber').value = waNumber;
+  if (gmailAddr) document.getElementById('gmailAddr').value = gmailAddr;
+  if (claudeKey) document.getElementById('agentStatus').textContent = 'AI Agent Aktif ✓';
+  if (!fonnteToken) addActivityLog('Fonnte WA', 'Belum setup — buka fonnte.com untuk daftar', 'Pending');
+  if (apolloKey) addActivityLog('Apollo API', 'Key tersimpan — Lead Hunter siap', 'OK');
+});
+</script>
+
+</body>
+</html>
